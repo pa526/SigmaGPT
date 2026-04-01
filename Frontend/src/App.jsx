@@ -14,6 +14,7 @@ function App() {
     reply, setReply,
     currThreadId, setCurrThreadId,
   };
+  
   return (
     <div className='app'>
       <MyContext.Provider value = {providerValues}>
