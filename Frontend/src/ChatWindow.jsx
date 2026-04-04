@@ -5,8 +5,9 @@ import { useContext, useEffect, useState } from 'react';
 import {ScaleLoader} from 'react-spinners';
 
 export default function ChatWindow() {
-    const {prompt, setPrompt, reply, setReply, currThreadId, prevChats, setPrevChats, setNewChat} = useContext(MyContext);
+    const {prompt, setPrompt, reply, setReply, currThreadId, setPrevChats, setNewChat} = useContext(MyContext);
     const [loading, setLoading] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
 
     const getReply = async() => {
         setLoading(true);
@@ -50,14 +51,26 @@ export default function ChatWindow() {
         setPrompt("");
     }, [reply]);
 
+    const handleProfileClick = () => {
+        setIsOpen(!isOpen);
+    }
+
     return (
         <div className='chatWindow'>
             <div className="navbar">
                 <span>SigmaGPT <i className="fa-solid fa-angle-down"></i></span>
-                <div className="userIconDiv">
+                <div className="userIconDiv" onClick={handleProfileClick}>
                     <span className='userIcon'><i className="fa-solid fa-user"></i></span>
                 </div>
             </div>
+            {
+                isOpen && 
+                <div className="dropDown">
+                    <div className="dropDownItem"><span className='userIcon'><i className="fa-solid fa-user"></i></span>Profile</div>
+                    <div className="dropDownItem"><i className="fa-solid fa-gear"></i>Settings</div>
+                    <div className="dropDownItem"><i class="fa-solid fa-arrow-right-from-bracket"></i>Log out</div>
+                </div>
+            }
             <Chat></Chat>
 
             <ScaleLoader color='#fff' loading={loading}>

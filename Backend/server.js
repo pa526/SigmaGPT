@@ -3,6 +3,7 @@ import 'dotenv/config';
 import cors from 'cors';
 import mongoose, { connect } from 'mongoose';
 import chatRoutes from "./routes/chat.js";
+import userRoutes from "./routes/user.js";
 
 const app = express();
 const PORT = process.env.PORT;
@@ -10,6 +11,7 @@ const PORT = process.env.PORT;
 app.use(express.json());
 app.use(cors());
 
+app.use("/", userRoutes);
 app.use("/api", chatRoutes);
 
 // app.post("/test", async (req, res) => {

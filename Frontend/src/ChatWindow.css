@@ -1,12 +1,13 @@
 .chatWindow {
     background-color: #212121;
     height: 100vh;
-    width: 100%;
+    flex-grow: 1;      /* Fill remaining width */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
     text-align: center;
+    overflow: hidden;  /* Ensures the window itself doesn't scroll */
 }
 
 /* navbar */
@@ -112,14 +113,28 @@ input:focus {
 }
 
 .dropDownItem {
+    display: flex;
+    align-items: center;
     font-size: 0.9rem;
     margin: 0.3rem 0rem;
     padding: 0.5rem 0.2rem;
     cursor: pointer;
 }
 
+.userIcon {
+    margin-right: 0.5rem;
+}
+
 
 .dropDownItem:hover {
     background-color: rgba(180, 180, 180, 0.1);
     border-radius: 6px;
+}
+
+.fa-gear {
+    margin-right: 0.5rem;
+}
+
+.fa-arrow-right-from-bracket {
+    margin-right: 0.5rem;
 }

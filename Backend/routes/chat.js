@@ -1,5 +1,5 @@
 import express from 'express';
-import Thread from '../models/Thread.js';
+import {Thread} from '../models/Thread.js';
 import getOpenAPIResponse from '../utils/openai.js';
 
 const router = express.Router();

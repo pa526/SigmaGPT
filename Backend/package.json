@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "bytez": "^0.7.0",
     "bytez.js": "^3.0.0",
     "cors": "^2.8.6",

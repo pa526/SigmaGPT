@@ -11,4 +11,7 @@ body {
 .app {
     background-color: #212121;
     display: flex;
+    height: 100vh;    /* Lock the app to viewport height */
+    overflow: hidden; /* This is crucial: it stops the whole page from scrolling */
+    width: 100vw;
 }

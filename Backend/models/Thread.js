@@ -37,4 +37,27 @@ const ThreadSchema = new mongoose.Schema({
     }
 });
 
-export default mongoose.model("Thread", ThreadSchema);
+const userSchema = new mongoose.Schema({
+    username: {
+        type: String,
+        required: true,
+    },
+    email: {
+        type: String,
+        required: true,
+    },
+    password: {
+        type: String,
+        required: true,
+    },
+    threads: [ThreadSchema],
+    createdAt: {
+        type: Date,
+        default: Date.now,
+    }
+});
+
+let Thread = mongoose.model("Thread", ThreadSchema);
+let User =  mongoose.model("User", userSchema);
+
+export {Thread, User};
