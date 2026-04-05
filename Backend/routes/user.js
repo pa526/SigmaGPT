@@ -1,12 +1,9 @@
 import express from 'express';
 import bcrypt from 'bcrypt';
 import {User} from '../models/Thread.js'; // Ensure this points to your User model
+import jwt from 'jsonwebtoken';
 
 const router = express.Router();
-
-router.get("/test", (req, res) => {
-    res.send("user is watching");
-})
 
 router.post("/signin", async (req, res) => {
     // 1. Destructure data from request body
@@ -33,7 +30,6 @@ router.post("/signin", async (req, res) => {
         });
 
         const savedUser = await newUser.save();
-        console.log(savedUser);
 
         res.status(201).json({ message: "User saved!", user: savedUser });
 
@@ -45,5 +41,35 @@ router.post("/signin", async (req, res) => {
         res.status(500).json({ message: "Internal Server Error" });
     }
 });
+
+router.post("/login", async (req, res) => {
+    const {email, password} = req.body;
+
+    try {
+        const user = await User.findOne({email});
+        console.log(email);
+        console.log(user);
+        console.log(password);
+
+        if(!user) {
+            return res.status(400).json("Invalid email or password");
+        }
+        const isPassword = await bcrypt.compare(password, user.password);
+
+        if(!isPassword) {
+            return res.status(400).json("Invalid email or password");
+        }
+
+        const token = jwt.sign({email}, "parthkhandelwal");
+        res.status(200).json({
+            message: "Login successful",
+            token: token
+        });
+
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Internal server error"});
+    }
+})
 
 export default router;

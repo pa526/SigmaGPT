@@ -1,9 +1,13 @@
 import './App.css';
-import ChatWindow from './ChatWindow';
-import Sidebar from './Sidebar';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { MyContext } from './MyContext';
 import { useState } from 'react';
 import {v1 as uuidv1} from 'uuid';
+
+//Components
+import ChatWindow from './ChatWindow';
+import Sidebar from './Sidebar';
+import Login from './login';
 
 function App() {
   const [prompt, setPrompt] = useState("");
@@ -23,13 +27,29 @@ function App() {
   };
 
   return (
-    <div className='app'>
-      <MyContext.Provider value = {providerValues}>
-        <Sidebar />
-        <ChatWindow/>
-      </MyContext.Provider>
-    </div>
-  )
+    <Router>
+      <Routes>
+        {/* 1. Auth Routes: These show ONLY the specific component */}
+        <Route path="/login" element={<Login />} />
+
+        {/* 2. Main App Route: Shows Sidebar + ChatWindow */}
+        <Route 
+          path="/chat" 
+          element={
+            <div className='app'>
+              <MyContext.Provider value={providerValues}>
+                <Sidebar />
+                <ChatWindow />
+              </MyContext.Provider>
+            </div>
+          } 
+        />
+
+        {/* 3. Redirect: If user hits root "/", send to login or chat */}
+        <Route path="/" element={<Navigate to="/login" />} />
+      </Routes>
+    </Router>
+  );
 }
 
 export default App
