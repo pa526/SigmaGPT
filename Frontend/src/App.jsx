@@ -8,6 +8,7 @@ import {v1 as uuidv1} from 'uuid';
 import ChatWindow from './ChatWindow';
 import Sidebar from './Sidebar';
 import Login from './login';
+import Signup from './Signup';
 
 function App() {
   const [prompt, setPrompt] = useState("");
@@ -31,6 +32,7 @@ function App() {
       <Routes>
         {/* 1. Auth Routes: These show ONLY the specific component */}
         <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
 
         {/* 2. Main App Route: Shows Sidebar + ChatWindow */}
         <Route 

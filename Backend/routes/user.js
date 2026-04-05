@@ -31,7 +31,9 @@ router.post("/signin", async (req, res) => {
 
         const savedUser = await newUser.save();
 
-        res.status(201).json({ message: "User saved!", user: savedUser });
+        const token = jwt.sign({email}, "parthkhandelwal");
+
+        res.status(201).json({ message: "User saved!", user: savedUser, token: token});
 
         // 5. Send success response
         // Don't send the password back in the response!
@@ -47,8 +49,9 @@ router.post("/login", async (req, res) => {
 
     try {
         const user = await User.findOne({email});
-        console.log(email);
+
         console.log(user);
+        console.log(email);
         console.log(password);
 
         if(!user) {

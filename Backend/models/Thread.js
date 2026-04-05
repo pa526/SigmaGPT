@@ -20,7 +20,6 @@ const ThreadSchema = new mongoose.Schema({
     threadId: {
         type: String,
         required: true,
-        unique: true,
     },
     title: {
         type: String,

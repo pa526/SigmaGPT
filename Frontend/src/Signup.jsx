@@ -1,21 +1,23 @@
 import React from 'react';
-import './Login.css';
+import './Signup.css';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const Login = () => {
+const Signup = () => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
+        username: "",
         email: "",
         password: "",
     });
 
     const handleFormData = (e) => {
-        setFormData({...formData, [e.target.name]: e.target.value});
+        setFormData(() => ({...formData, [e.target.name]: e.target.value}));
     }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log(formData);
         const options = {
             method: "POST",
             headers: {
@@ -24,37 +26,53 @@ const Login = () => {
             body: JSON.stringify(formData),
         };
         try {
-            const response = await fetch("http://localhost:8080/login", options);
+            const response = await fetch("http://localhost:8080/signin", options);
             const data = await response.json();
             console.log(data);
+
             if(data.token) {
                 localStorage.setItem("token", data.token);
+
                 navigate("/chat");
             }
+
         } catch(err) {
             console.log(err);
         }
     }
 
   return (
-    <div className="login-container">
-      <main className="login-content">
-        <div className="login-header">
-          {/* Circular Icon like your profile picture in the screenshot */}
+    <div className="signup-container">
+      <main className="signup-content">
+        <div className="signup-header">
+          {/* Circular Icon matching your SigmaGPT profile style */}
           <div className="sigma-logo">Σ</div>
-          <h1 className="login-title">Welcome back</h1>
+          <h1 className="signup-title">Create your account</h1>
         </div>
 
-        <form className="login-form" onSubmit={handleSubmit}>
+        <form className="signup-form" onSubmit={handleSubmit}>
+          <div className="input-wrapper">
+            <label htmlFor="username">Username</label>
+            <input 
+              type="text" 
+              id="username" 
+              placeholder="Pick a username" 
+              name='username'
+              value={formData.username}
+              onChange={handleFormData}
+              required 
+            />
+          </div>
+
           <div className="input-wrapper">
             <label htmlFor="email">Email address</label>
             <input 
               type="email" 
               id="email" 
-              placeholder="Enter your email"
+              placeholder="name@example.com" 
               name='email'
-              value={formData.email}  
-              onChange={handleFormData}  
+              value={formData.email}
+              onChange={handleFormData}
               required 
             />
           </div>
@@ -64,30 +82,25 @@ const Login = () => {
             <input 
               type="password" 
               id="password" 
-              placeholder="Enter your password" 
+              placeholder="Create a password" 
               name='password'
-              value={formData.password}  
-              onChange={handleFormData}  
+              value={formData.password}
+              onChange={handleFormData}
               required 
             />
           </div>
 
-          <button type="submit" className="continue-btn">
-            Continue
+          <button type="submit" className="create-btn">
+            Create account
           </button>
         </form>
 
-        <footer className="login-footer">
-          <p>Don't have an account? <a href="/signup">Sign up</a></p>
+        <footer className="signup-footer">
+          <p>Already have an account? <a href="/login">Log in</a></p>
         </footer>
       </main>
-      
-      {/* Footer text similar to your screenshot footer */}
-      <div className="login-disclaimer">
-        SigmaGPT can make mistakes. Check important info.
-      </div>
     </div>
   );
 };
 
-export default Login;
+export default Signup;
