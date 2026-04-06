@@ -50,10 +50,6 @@ router.post("/login", async (req, res) => {
     try {
         const user = await User.findOne({email});
 
-        console.log(user);
-        console.log(email);
-        console.log(password);
-
         if(!user) {
             return res.status(400).json("Invalid email or password");
         }

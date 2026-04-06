@@ -16,9 +16,17 @@ export default function Sidebar() {
   } = useContext(MyContext);
 
   const getAllThreads = async () => {
+    const options = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      },
+    }
     try {
-      const response = await fetch("http://localhost:8080/api/thread");
+      const response = await fetch("http://localhost:8080/api/thread", options);
       const res = await response.json();
+      console.log(res);
       const filteredData = res.map((thread) => ({
         threadId: thread.threadId,
         title: thread.title,
@@ -43,10 +51,18 @@ export default function Sidebar() {
 
   const changeThread = async (newthreadId) => {
     setCurrThreadId(newthreadId);
+    const options = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      },
+    }
 
     try {
       const response = await fetch(
-        `http://localhost:8080/api/thread/${newthreadId}`,
+        `http://localhost:8080/api/thread/${newthreadId}`, 
+        options
       );
       const res = await response.json();
       console.log(res);
@@ -59,8 +75,15 @@ export default function Sidebar() {
   };
 
   const deleteThread = async(threadId) => {
+    const options = {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      },
+    }
     try {
-        const response = await fetch(`http://localhost:8080/api/thread/${threadId}`, {method: "DELETE"});
+        const response = await fetch(`http://localhost:8080/api/thread/${threadId}`, options);
         const res = await response.json();
         console.log(res);
 

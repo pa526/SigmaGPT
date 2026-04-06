@@ -15,7 +15,8 @@ export default function ChatWindow() {
         const options = {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",           
+                "Content-Type": "application/json",  
+                "Authorization": `Bearer ${localStorage.getItem('token')}`         
             },
             body: JSON.stringify({
                 message: prompt,
@@ -68,7 +69,7 @@ export default function ChatWindow() {
                 <div className="dropDown">
                     <div className="dropDownItem"><span className='userIcon'><i className="fa-solid fa-user"></i></span>Profile</div>
                     <div className="dropDownItem"><i className="fa-solid fa-gear"></i>Settings</div>
-                    <div className="dropDownItem"><i class="fa-solid fa-arrow-right-from-bracket"></i>Log out</div>
+                    <div className="dropDownItem"><i className="fa-solid fa-arrow-right-from-bracket"></i>Log out</div>
                 </div>
             }
             <Chat></Chat>

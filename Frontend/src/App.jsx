@@ -7,7 +7,7 @@ import {v1 as uuidv1} from 'uuid';
 //Components
 import ChatWindow from './ChatWindow';
 import Sidebar from './Sidebar';
-import Login from './login';
+import Login from './Login';
 import Signup from './Signup';
 
 function App() {

@@ -1,6 +1,7 @@
 import express from 'express';
-import {Thread} from '../models/Thread.js';
+import {Thread, User} from '../models/Thread.js';
 import getOpenAPIResponse from '../utils/openai.js';
+import jwt from 'jsonwebtoken';
 
 const router = express.Router();
 
@@ -22,9 +23,23 @@ router.post("/test", async(req, res) => {
 
 //Get all thread route
 router.get("/thread", async(req, res) => {
+    const authHeader = req.headers.authorization; 
+
+    if (!authHeader) {
+        return res.status(401).json({ error: "No authorization header provided" });
+    }
+
     try {
-        const thread = await Thread.find({}).sort({updatedAt: -1});
-        res.json(thread);
+
+        const token = authHeader.split(' ')[1]; 
+        
+        // 3. Verify the actual token string
+        const decoded = jwt.verify(token, "parthkhandelwal");
+        
+        console.log(decoded);
+        const user = await User.findOne({email: decoded.email});
+        // const thread = await Thread.find({}).sort({updatedAt: -1});
+        res.json(user.threads);
     } catch(err) {
         console.log(err);
         res.status(500).json("failed to fetch threads");
@@ -34,9 +49,21 @@ router.get("/thread", async(req, res) => {
 //Get a specific thread
 router.get("/thread/:threadId", async(req, res) => {
     let {threadId} = req.params;
-    try {
-        const thread = await Thread.findOne({threadId});
+    const authHeader = req.headers.authorization;
 
+    if(!authHeader) {
+        res.status(400).json({error: "User not found"});
+    }
+    try {
+        const token = authHeader.split(' ')[1];
+        const decoded = jwt.verify(token, "parthkhandelwal");
+       
+        const user = await User.findOne({email: decoded.email});
+
+        if (!user) return res.status(404).json({ error: "User not found" });
+
+        let thread = user.threads.find(t => t.threadId === threadId);
+    
         if(!thread) {
             res.status(404).json({error: "Thread not found"});
         }
@@ -51,12 +78,30 @@ router.get("/thread/:threadId", async(req, res) => {
 //Delete a thread
 router.delete("/thread/:threadId", async(req, res) => {
     const {threadId} = req.params;
-    try {
-        const deletedThread = await Thread.findOneAndDelete({threadId});
+    const authHeader = req.headers.authorization;
 
-        if(!deletedThread) {
+    if(!authHeader) {
+        res.status(400).json({error: "User not found"});
+    }
+
+    try {
+        const token = authHeader.split(' ')[1];
+        const decoded = jwt.verify(token, "parthkhandelwal");
+       
+        const user = await User.findOne({email: decoded.email});
+
+        if (!user) return res.status(404).json({ error: "User not found" });
+
+        const thread =  user.threads.find(t => t.threadId === threadId);
+
+        if(!thread) {
             res.status(404).json({error: "Thread not found"});
         }
+
+        user.threads.splice(thread, 1);
+
+        user.markModified('threads');
+        await user.save();
 
         res.status(200).json({success: "Thread deleted successfully"});
     } catch(err) {
@@ -66,36 +111,59 @@ router.delete("/thread/:threadId", async(req, res) => {
 });  
 
 //Get a reply from openai
-router.post("/chat", async(req, res) => {
-    const {threadId, message} = req.body;
+router.post("/chat", async (req, res) => {
+    const { threadId, message } = req.body;
+    const authHeader = req.headers.authorization;
 
-    if(!threadId || !message) {
-        res.status(404).json({error: "missing required field"});
+    if (!threadId || !message) {
+        return res.status(400).json({ error: "missing required field" });
     }
 
     try {
-        let thread = await Thread.findOne({threadId});
+        const token = authHeader.split(' ')[1];
+        const decoded = jwt.verify(token, "parthkhandelwal");
 
-        if(!thread) {
-            //create a new thread in the database
-            thread = new Thread({
+        let user = await User.findOne({ email: decoded.email });
+        if (!user) return res.status(404).json({ error: "User not found" });
+
+        // 1. Ensure the threads array exists
+        if (!user.threads) user.threads = [];
+
+        // 2. Look for existing thread
+        let thread = user.threads.find(t => t.threadId === threadId);
+
+        if (!thread) {
+            // FIX 1: Push to user.threads (not user.messages)
+            // FIX 2: Create a plain object for the subdocument array
+            const newThread = {
                 threadId,
                 title: message,
-                messages: [{role: "user", content: message}]
-            });
+                messages: [{ role: "user", content: message }]
+            };
+            user.threads.push(newThread);
+            
+            // FIX 3: Assign the new thread to our 'thread' variable so the AI code below can find it
+            thread = user.threads[user.threads.length - 1];
         } else {
-            thread.messages.push({role: "user", content: message});
+            thread.messages.push({ role: "user", content: message });
         }
 
+        // 3. Get AI Response
         const assistantReply = await getOpenAPIResponse(message);
-        thread.messages.push({role: "assistant", content: assistantReply});
+        
+        // 4. Push AI response to the thread we found/created above
+        thread.messages.push({ role: "assistant", content: assistantReply });
         thread.updatedAt = new Date();
 
-        await thread.save();
-        res.json({reply: assistantReply});
-    } catch(err) {
-        console.log(err);
-        res.status(500).json({error: "something went wrong"});
+        // 5. Tell Mongoose the nested array changed
+        user.markModified('threads');
+        
+        await user.save();
+        res.json({ reply: assistantReply });
+
+    } catch (err) {
+        console.log("Error in /chat:", err);
+        res.status(500).json({ error: "Internal server error" });
     }
 });
 
