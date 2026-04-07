@@ -2,8 +2,9 @@ import React from 'react';
 import './Login.css';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { MyContext } from './MyContext';
 
-const Login = () => {
+const Login = ({setIsAuthenticated}) => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         email: "",
@@ -30,6 +31,7 @@ const Login = () => {
             console.log(data);
             if(data.token) {
                 localStorage.setItem("token", data.token);
+                setIsAuthenticated(true);
                 navigate("/chat");
             }
         } catch(err) {

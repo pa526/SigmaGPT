@@ -17,6 +17,9 @@ function App() {
   const [prevChats, setPrevChats] = useState([]); //stores all chats of our curr threads 
   const [newChat, setNewChat] = useState(true);
   const [allThreads, setAllThreads] = useState([]);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return localStorage.getItem('token') !== null;
+  });
 
   const providerValues = {
     prompt, setPrompt,
@@ -25,30 +28,32 @@ function App() {
     prevChats, setPrevChats,
     newChat, setNewChat,
     allThreads, setAllThreads,
+    isAuthenticated, setIsAuthenticated,
   };
 
   return (
     <Router>
       <Routes>
         {/* 1. Auth Routes: These show ONLY the specific component */}
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated}/>} />
         <Route path="/signup" element={<Signup />} />
 
         {/* 2. Main App Route: Shows Sidebar + ChatWindow */}
         <Route 
           path="/chat" 
-          element={
-            <div className='app'>
+          element={ isAuthenticated ? 
+            <div className='app'> 
               <MyContext.Provider value={providerValues}>
                 <Sidebar />
                 <ChatWindow />
               </MyContext.Provider>
-            </div>
+            </div> : <Navigate to="/login"/>
           } 
         />
 
         {/* 3. Redirect: If user hits root "/", send to login or chat */}
         <Route path="/" element={<Navigate to="/login" />} />
+        
       </Routes>
     </Router>
   );

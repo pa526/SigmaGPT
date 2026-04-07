@@ -35,11 +35,14 @@ router.get("/thread", async(req, res) => {
         
         // 3. Verify the actual token string
         const decoded = jwt.verify(token, "parthkhandelwal");
-        
-        console.log(decoded);
+
         const user = await User.findOne({email: decoded.email});
-        // const thread = await Thread.find({}).sort({updatedAt: -1});
-        res.json(user.threads);
+
+        const sortedThreads = user.threads.sort((a, b) => {
+            return new Date(b.updatedAt) - new Date(a.updatedAt);
+        });
+
+        res.json(sortedThreads);
     } catch(err) {
         console.log(err);
         res.status(500).json("failed to fetch threads");

@@ -69,6 +69,21 @@ router.post("/login", async (req, res) => {
         console.log(err);
         res.status(500).json({message: "Internal server error"});
     }
+});
+
+router.get("/user", async(req, res) => {
+    const authHeader = req.headers.authorization;
+    try {
+        const token = authHeader.split(' ')[1];
+        const decoded = jwt.verify(token, "parthkhandelwal");
+
+        const user = await User.findOne({email: decoded.email});
+
+        res.json({username: user.username, email: user.email});
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({error: "Internal Server Error"});
+    }
 })
 
 export default router;
