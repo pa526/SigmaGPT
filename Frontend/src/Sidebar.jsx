@@ -1,9 +1,10 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import "./Sidebar.css";
 import { MyContext } from "./MyContext.jsx";
 import { v1 as uuidv1 } from "uuid";
 
 export default function Sidebar() {
+  const [isCollapsed, setIsCollapsed] = useState(false); // State for toggle
   const {
     allThreads,
     setAllThreads,
@@ -22,18 +23,17 @@ export default function Sidebar() {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${localStorage.getItem('token')}`,
       },
-    }
+    };
     try {
       const response = await fetch("http://localhost:8080/api/thread", options);
       const res = await response.json();
-      console.log(res);
       const filteredData = res.map((thread) => ({
         threadId: thread.threadId,
         title: thread.title,
       }));
       setAllThreads(filteredData);
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   };
 
@@ -57,71 +57,75 @@ export default function Sidebar() {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${localStorage.getItem('token')}`,
       },
-    }
-
+    };
     try {
-      const response = await fetch(
-        `http://localhost:8080/api/thread/${newthreadId}`, 
-        options
-      );
+      const response = await fetch(`http://localhost:8080/api/thread/${newthreadId}`, options);
       const res = await response.json();
-      console.log(res);
       setPrevChats(res);
       setNewChat(false);
       setReply(null);
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   };
 
-  const deleteThread = async(threadId) => {
+  const deleteThread = async (threadId) => {
     const options = {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${localStorage.getItem('token')}`,
       },
-    }
+    };
     try {
-        const response = await fetch(`http://localhost:8080/api/thread/${threadId}`, options);
-        const res = await response.json();
-        console.log(res);
-
-        setAllThreads(prev => prev.filter(thread => thread.threadId !== threadId));
-
-        if(threadId === currThreadId) {
-            createNewChat()
-        }
-
-    } catch(err) {
-        console.log(err);
+      await fetch(`http://localhost:8080/api/thread/${threadId}`, options);
+      setAllThreads(prev => prev.filter(thread => thread.threadId !== threadId));
+      if (threadId === currThreadId) createNewChat();
+    } catch (err) {
+      console.error(err);
     }
-  }
+  };
 
   return (
-    <section className="sidebar">
-      <button onClick={createNewChat}>
-        <img
-          src="src/assets/blacklogo.png"
-          alt="gpt logo"
-          className="logo"
-        ></img>
-        <span>
-          <i className="fa-solid fa-pen-to-square"></i>
-        </span>
-      </button>
+    <section className={`sidebar ${isCollapsed ? "collapsed" : ""}`}>
+      {/* Toggle Button */}
+      <div className="toggle-container">
+        <button className="toggle-btn" onClick={() => setIsCollapsed(!isCollapsed)}>
+          <i className={`fa-solid ${isCollapsed ? "fa-bars" : "fa-chevron-left"}`}></i>
+        </button>
+      </div>
 
-      <ul className="history">
-        {allThreads?.map((thread, idx) => (
-          <li key={idx} onClick={() => changeThread(thread.threadId)} className={thread.threadId === currThreadId ? "highlighted" : " "}>
-            {thread.title}
-            <i onClick={(e) => {e.stopPropagation(); deleteThread(thread.threadId);}} className="fa-solid fa-trash"></i>
-          </li>
-        ))}
-      </ul>
+      <div className="sidebar-content">
+        <button className="new-chat-btn" onClick={createNewChat}>
+          <img src="src/assets/blacklogo.png" alt="logo" className="logo" />
+          {!isCollapsed && <span className="btn-text">New Chat</span>}
+          <span><i className="fa-solid fa-pen-to-square"></i></span>
+        </button>
 
-      <div className="sign">
-        <p>By Parth Khandelwal &hearts;</p>
+        <ul className="history">
+          {allThreads?.map((thread, idx) => (
+            <li 
+              key={idx} 
+              onClick={() => changeThread(thread.threadId)} 
+              className={thread.threadId === currThreadId ? "highlighted" : ""}
+            >
+              <i className="fa-regular fa-message"></i>
+              {!isCollapsed && <span className="thread-title">{thread.title}</span>}
+              {!isCollapsed && (
+                <i 
+                  onClick={(e) => { e.stopPropagation(); deleteThread(thread.threadId); }} 
+                  className="fa-solid fa-trash"
+                ></i>
+              )}
+            </li>
+          ))}
+        </ul>
+
+        {!isCollapsed && (
+          <div className="sign">
+            <p>By Parth Khandelwal &hearts;</p>
+          </div>
+        )}
       </div>
     </section>
   );

@@ -13,12 +13,13 @@
 
 .gptDiv {
     text-align: left;
-    font-size: 0.9rem;
+    font-size: 1.1rem;
     line-height: 1.25;
 }
 
 .userMessage {
     background-color: #323232;
+    font-size: 1.1rem;
     padding: 10px 20px;
     border-radius: 14px;
     margin-left: 30rem;

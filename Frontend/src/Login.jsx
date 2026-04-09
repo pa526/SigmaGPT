@@ -17,7 +17,6 @@ const Login = ({setIsAuthenticated}) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(formData);
         const options = {
             method: "POST",
             headers: {
@@ -28,7 +27,6 @@ const Login = ({setIsAuthenticated}) => {
         try {
             const response = await fetch("http://localhost:8080/login", options);
             const data = await response.json();
-            console.log(data);
             if(data.token) {
                 localStorage.setItem("token", data.token);
                 setIsAuthenticated(true);

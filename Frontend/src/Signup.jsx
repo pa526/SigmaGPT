@@ -17,7 +17,6 @@ const Signup = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(formData);
         const options = {
             method: "POST",
             headers: {
@@ -28,8 +27,7 @@ const Signup = () => {
         try {
             const response = await fetch("http://localhost:8080/signin", options);
             const data = await response.json();
-            console.log(data);
-
+          
             if(data.token) {
                 localStorage.setItem("token", data.token);
 
