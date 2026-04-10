@@ -33,7 +33,7 @@ export default function Chat() {
 
   return (
     <>
-      {newChat && <h1 style={{fontWeight: "600"}}>Start a New Chat!</h1>}
+      {newChat && <h1 style={{fontWeight: "600", marginLeft: "250px"}}>Start a New Chat!</h1>}
       <div className="chats">
         {prevChats?.slice(0, -1).map((chat, idx) => (
           <div

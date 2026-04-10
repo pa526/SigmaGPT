@@ -30,8 +30,6 @@ router.post("/transcribe", upload.single('audio'), async (req, res) => {
     }
 
     try {
-        console.log(req.file);
-        // Verify user before spending API credits
         verifyToken(authHeader);
 
         // Prepare the form data for Sarvam AI

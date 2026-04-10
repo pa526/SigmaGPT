@@ -1,7 +1,18 @@
 .chats {
-    max-width: 700px;
-    overflow-y: scroll;
-    padding: 8rem;
+    /* Use flex-grow to take up space, but let the parent handle the height */
+    width: 100%;
+    max-width: 850px; /* Matching your ChatWindow max-width */
+    margin: 0 auto;
+    
+    /* Change scroll to auto so it only appears when needed */
+    overflow-y: auto; 
+    overflow-x: hidden;
+    
+    /* Fix: Reduced the massive padding which causes overflow issues */
+    padding: 2rem 1rem; 
+    
+    /* Ensure it doesn't push the parent */
+    box-sizing: border-box;
 }
 
 .userDiv {
@@ -18,13 +29,16 @@
 }
 
 .userMessage {
-    background-color: #323232;
-    font-size: 1.1rem;
-    padding: 10px 20px;
-    border-radius: 14px;
-    margin-left: 30rem;
-    max-width: 700px;
+    background-color: #2f2f2f; /* Gemini-like message bubble */
+    font-size: 1rem;
+    padding: 12px 16px;
+    border-radius: 18px;
+    
+    /* Remove the 'margin-left: 30rem' - it breaks responsiveness */
+    margin-left: auto; 
+    max-width: 80%; 
     width: fit-content;
+    word-wrap: break-word;
 }
 
 .hljs {
