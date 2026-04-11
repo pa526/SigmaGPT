@@ -9,7 +9,11 @@ const app = express();
 const PORT = process.env.PORT;
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: "https://sigma-gpt-1-ee2mbuknh-pa526s-projects.vercel.app",
+  methods: ["GET", "POST"],
+  credentials: true
+}));
 
 app.use("/", userRoutes);
 app.use("/api", chatRoutes);

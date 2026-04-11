@@ -23,35 +23,42 @@ export default function ChatWindow() {
   const [isOpen, setIsOpen] = useState(false);
   const [showCard, setShowCard] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
-  
+
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const navigate = useNavigate();
 
+  // Define the base backend URL here for easy updates
+  const BACKEND_URL = "https://sigmagpt-cw84.onrender.com";
+
   const fetchAIReply = async (messageText) => {
     if (!messageText || !messageText.trim()) return;
-    
+
     setLoading(true);
     setNewChat(false);
-    
-    const options = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify({
-        message: messageText,
-        threadId: currThreadId,
-      }),
-    };
 
     try {
-      const response = await fetch("https://sigmagpt-cw84.onrender.com/api/chat", options);
+      const response = await fetch(`${BACKEND_URL}/api/chat`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          message: messageText,
+          threadId: currThreadId,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`);
+      }
+
       const res = await response.json();
       setReply(res.reply);
     } catch (err) {
       console.error("AI Fetch Error:", err);
+      alert("Failed to connect to the AI. Ensure the backend is awake.");
     } finally {
       setLoading(false);
     }
@@ -75,6 +82,7 @@ export default function ChatWindow() {
       setIsRecording(true);
     } catch (err) {
       console.error("Microphone Error:", err);
+      alert("Could not access microphone.");
     }
   };
 
@@ -90,10 +98,10 @@ export default function ChatWindow() {
     const formData = new FormData();
     formData.append("audio", blob, "user_speech.wav");
     try {
-      const response = await axios.post("https://sigmagpt-cw84.onrender.com/api/transcribe", formData, {
-        headers: { 
+      const response = await axios.post(`${BACKEND_URL}/api/transcribe`, formData, {
+        headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
-          "Content-Type": "multipart/form-data" 
+          "Content-Type": "multipart/form-data",
         },
       });
       if (response.data.transcript) {
@@ -128,7 +136,9 @@ export default function ChatWindow() {
     <div className="chatWindow">
       <nav className="navbar">
         <div className="logo-group">
-          <span className="logo">SigmaGPT</span>
+          <span className="logo" onClick={() => navigate("/")} style={{cursor: 'pointer'}}>
+            SigmaGPT
+          </span>
         </div>
         <div className="userIconDiv" onClick={() => setIsOpen(!isOpen)}>
           <span className="userIcon"><i className="fa-solid fa-user"></i></span>
@@ -179,7 +189,7 @@ export default function ChatWindow() {
               <button 
                 className={`icon-btn send-btn ${prompt.trim() ? "visible" : ""}`}
                 onClick={getReply}
-                disabled={!prompt.trim()}
+                disabled={!prompt.trim() || loading}
               >
                 <i className="fa-solid fa-paper-plane"></i>
               </button>
