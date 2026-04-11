@@ -1,102 +1,103 @@
 import React from 'react';
 import './Signup.css';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const Signup = () => {
-    const navigate = useNavigate();
-    const [formData, setFormData] = useState({
-        username: "",
-        email: "",
-        password: "",
-    });
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
 
-    const handleFormData = (e) => {
-        setFormData(() => ({...formData, [e.target.name]: e.target.value}));
+  const handleFormData = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    };
+    try {
+      // Note: Kept your /signin endpoint as per original logic
+      const response = await fetch("https://sigmagpt-cw84.onrender.com/signin", options);
+      const data = await response.json();
+
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+        navigate("/chat");
+      }
+    } catch (err) {
+      console.error("Signup error:", err);
     }
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const options = {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json", 
-            },
-            body: JSON.stringify(formData),
-        };
-        try {
-            const response = await fetch("https://sigmagpt-cw84.onrender.com/signin", options);
-            const data = await response.json();
-          
-            if(data.token) {
-                localStorage.setItem("token", data.token);
-
-                navigate("/chat");
-            }
-
-        } catch(err) {
-            console.log(err);
-        }
-    }
+  }
 
   return (
-    <div className="signup-container">
-      <main className="signup-content">
-        <div className="signup-header">
-          {/* Circular Icon matching your SigmaGPT profile style */}
-          <div className="sigma-logo">Σ</div>
-          <h1 className="signup-title">Create your account</h1>
-        </div>
+    <div className="auth-container">
+      <div className="auth-box">
+        <header className="auth-header">
+          <div className="auth-logo">Σ</div>
+          <h1 className="auth-title">Create account</h1>
+        </header>
 
-        <form className="signup-form" onSubmit={handleSubmit}>
-          <div className="input-wrapper">
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <div className="input-field">
             <label htmlFor="username">Username</label>
-            <input 
-              type="text" 
-              id="username" 
-              placeholder="Pick a username" 
-              name='username'
+            <input
+              type="text"
+              id="username"
+              name="username"
+              placeholder="Your username"
               value={formData.username}
               onChange={handleFormData}
-              required 
+              required
+              autoComplete="username"
             />
           </div>
 
-          <div className="input-wrapper">
-            <label htmlFor="email">Email address</label>
-            <input 
-              type="email" 
-              id="email" 
-              placeholder="name@example.com" 
-              name='email'
+          <div className="input-field">
+            <label htmlFor="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="Email address"
               value={formData.email}
               onChange={handleFormData}
-              required 
+              required
+              autoComplete="email"
             />
           </div>
 
-          <div className="input-wrapper">
+          <div className="input-field">
             <label htmlFor="password">Password</label>
-            <input 
-              type="password" 
-              id="password" 
-              placeholder="Create a password" 
-              name='password'
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Create password"
               value={formData.password}
               onChange={handleFormData}
-              required 
+              required
+              autoComplete="new-password"
             />
           </div>
 
-          <button type="submit" className="create-btn">
-            Create account
+          <button type="submit" className="auth-btn">
+            Continue
           </button>
         </form>
 
-        <footer className="signup-footer">
-          <p>Already have an account? <a href="/login">Log in</a></p>
+        <footer className="auth-footer">
+          Already have an account? <Link to="/login">Log in</Link>
         </footer>
-      </main>
+      </div>
     </div>
   );
 };

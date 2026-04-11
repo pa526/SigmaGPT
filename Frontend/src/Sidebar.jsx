@@ -97,7 +97,7 @@ export default function Sidebar() {
 
       <div className="sidebar-content">
         <button className="new-chat-btn" onClick={createNewChat}>
-          <img src="/Frontend/public/gptlogo.png" alt="logo" className="logo" />
+          <img src="src/assets/blacklogo.png" alt="logo" className="logo" />
           {!isCollapsed && <span className="btn-text">New Chat</span>}
           <span><i className="fa-solid fa-pen-to-square"></i></span>
         </button>

@@ -1,91 +1,82 @@
 import React from 'react';
 import './Login.css';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { MyContext } from './MyContext';
+import { useNavigate, Link } from 'react-router-dom';
 
-const Login = ({setIsAuthenticated}) => {
-    const navigate = useNavigate();
-    const [formData, setFormData] = useState({
-        email: "",
-        password: "",
-    });
+const Login = ({ setIsAuthenticated }) => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
 
-    const handleFormData = (e) => {
-        setFormData({...formData, [e.target.name]: e.target.value});
+  const handleFormData = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const options = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    };
+    try {
+      const response = await fetch("https://sigmagpt-cw84.onrender.com/login", options);
+      const data = await response.json();
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+        setIsAuthenticated(true);
+        navigate("/chat");
+      }
+    } catch (err) {
+      console.log("Login failure:", err);
     }
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const options = {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json", 
-            },
-            body: JSON.stringify(formData),
-        };
-        try {
-            const response = await fetch("https://sigmagpt-cw84.onrender.com/login", options);
-            const data = await response.json();
-            if(data.token) {
-                localStorage.setItem("token", data.token);
-                setIsAuthenticated(true);
-                navigate("/chat");
-            }
-        } catch(err) {
-            console.log(err);
-        }
-    }
+  }
 
   return (
-    <div className="login-container">
-      <main className="login-content">
-        <div className="login-header">
-          {/* Circular Icon like your profile picture in the screenshot */}
-          <div className="sigma-logo">Σ</div>
-          <h1 className="login-title">Welcome back</h1>
-        </div>
+    <div className="auth-container">
+      <div className="auth-box">
+        <header className="auth-header">
+          <div className="auth-logo">Σ</div>
+          <h1 className="auth-title">Welcome back</h1>
+        </header>
 
-        <form className="login-form" onSubmit={handleSubmit}>
-          <div className="input-wrapper">
-            <label htmlFor="email">Email address</label>
-            <input 
-              type="email" 
-              id="email" 
-              placeholder="Enter your email"
-              name='email'
-              value={formData.email}  
-              onChange={handleFormData}  
-              required 
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <div className="input-field">
+            <label htmlFor="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="Email address"
+              value={formData.email}
+              onChange={handleFormData}
+              required
             />
           </div>
 
-          <div className="input-wrapper">
+          <div className="input-field">
             <label htmlFor="password">Password</label>
-            <input 
-              type="password" 
-              id="password" 
-              placeholder="Enter your password" 
-              name='password'
-              value={formData.password}  
-              onChange={handleFormData}  
-              required 
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleFormData}
+              required
             />
           </div>
 
-          <button type="submit" className="continue-btn">
+          <button type="submit" className="auth-btn">
             Continue
           </button>
         </form>
 
-        <footer className="login-footer">
-          <p>Don't have an account? <a href="/signup">Sign up</a></p>
+        <footer className="auth-footer">
+          Don't have an account? <Link to="/signup">Sign up</Link>
         </footer>
-      </main>
-      
-      {/* Footer text similar to your screenshot footer */}
-      <div className="login-disclaimer">
-        SigmaGPT can make mistakes. Check important info.
       </div>
     </div>
   );
