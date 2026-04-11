@@ -10,7 +10,7 @@ const PORT = process.env.PORT;
 
 app.use(express.json());
 app.use(cors({
-  origin: "https://sigma-gpt-1-ee2mbuknh-pa526s-projects.vercel.app",
+  origin: "*",
   methods: ["GET", "POST"],
   credentials: true
 }));
