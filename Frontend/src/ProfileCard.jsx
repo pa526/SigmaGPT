@@ -16,7 +16,7 @@ const ProfileCard = () => {
     if (!token) return;
 
     try {
-      const response = await fetch("http://localhost:8080/user", {
+      const response = await fetch("https://sigma-gpt-1.vercel.app/user", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
