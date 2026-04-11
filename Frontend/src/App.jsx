@@ -50,11 +50,7 @@ function App() {
         <Route
           path="/login"
           element={
-            !isAuthenticated ? (
               <Login setIsAuthenticated={setIsAuthenticated} />
-            ) : (
-              <Navigate to="/chat" replace />
-            )
           }
         />
 
@@ -62,11 +58,7 @@ function App() {
         <Route 
           path="/signup" 
           element={
-            !isAuthenticated ? (
               <Signup />
-            ) : (
-              <Navigate to="/chat" replace />
-            )
           } 
         />
 
@@ -88,7 +80,7 @@ function App() {
         />
 
         {/* Root Redirect */}
-        <Route path="/" element={<Navigate to={isAuthenticated ? "/chat" : "/login"} replace />} />
+        <Route path="/" element={<Navigate to={"/login"} replace />} />
         
         {/* Catch-all for any other broken links */}
         <Route path="*" element={<Navigate to="/" replace />} />
