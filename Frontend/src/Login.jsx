@@ -25,7 +25,7 @@ const Login = ({setIsAuthenticated}) => {
             body: JSON.stringify(formData),
         };
         try {
-            const response = await fetch("http://localhost:8080/login", options);
+            const response = await fetch("https://sigmagpt-cw84.onrender.com/login", options);
             const data = await response.json();
             if(data.token) {
                 localStorage.setItem("token", data.token);

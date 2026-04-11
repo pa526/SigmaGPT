@@ -25,7 +25,7 @@ export default function Sidebar() {
       },
     };
     try {
-      const response = await fetch("http://localhost:8080/api/thread", options);
+      const response = await fetch("https://sigmagpt-cw84.onrender.com/api/thread", options);
       const res = await response.json();
       const filteredData = res.map((thread) => ({
         threadId: thread.threadId,
@@ -59,7 +59,7 @@ export default function Sidebar() {
       },
     };
     try {
-      const response = await fetch(`http://localhost:8080/api/thread/${newthreadId}`, options);
+      const response = await fetch(`https://sigmagpt-cw84.onrender.com/api/thread/${newthreadId}`, options);
       const res = await response.json();
       setPrevChats(res);
       setNewChat(false);
@@ -78,7 +78,7 @@ export default function Sidebar() {
       },
     };
     try {
-      await fetch(`http://localhost:8080/api/thread/${threadId}`, options);
+      await fetch(`https://sigmagpt-cw84.onrender.com/api/thread/${threadId}`, options);
       setAllThreads(prev => prev.filter(thread => thread.threadId !== threadId));
       if (threadId === currThreadId) createNewChat();
     } catch (err) {

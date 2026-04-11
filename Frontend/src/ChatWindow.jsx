@@ -47,7 +47,7 @@ export default function ChatWindow() {
     };
 
     try {
-      const response = await fetch("http://localhost:8080/api/chat", options);
+      const response = await fetch("https://sigmagpt-cw84.onrender.com/api/chat", options);
       const res = await response.json();
       setReply(res.reply);
     } catch (err) {
@@ -90,7 +90,7 @@ export default function ChatWindow() {
     const formData = new FormData();
     formData.append("audio", blob, "user_speech.wav");
     try {
-      const response = await axios.post("http://localhost:8080/api/transcribe", formData, {
+      const response = await axios.post("https://sigmagpt-cw84.onrender.com/api/transcribe", formData, {
         headers: { 
           Authorization: `Bearer ${localStorage.getItem("token")}`,
           "Content-Type": "multipart/form-data" 

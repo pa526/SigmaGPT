@@ -6,6 +6,7 @@ import multer from 'multer';
 import axios from 'axios';
 import FormData from 'form-data';
 import fs from 'fs';
+import 'dotenv/config';
 
 const upload = multer({ dest: 'uploads/' });
 const router = express.Router();
@@ -14,7 +15,7 @@ const router = express.Router();
 const verifyToken = (authHeader) => {
     if (!authHeader) return null;
     const token = authHeader.split(' ')[1];
-    return jwt.verify(token, "parthkhandelwal");
+    return jwt.verify(token, process.env.SECRET_KEY);
 };
 
 // --- Sarvam AI Speech-to-Text Route ---

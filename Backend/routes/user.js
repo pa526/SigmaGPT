@@ -2,6 +2,7 @@ import express from 'express';
 import bcrypt from 'bcrypt';
 import {User} from '../models/Thread.js'; // Ensure this points to your User model
 import jwt from 'jsonwebtoken';
+import 'dotenv/config';
 
 const router = express.Router();
 
@@ -16,9 +17,6 @@ router.post("/signin", async (req, res) => {
             return res.status(400).json({ message: "User already exists with this email." });
         }
 
-        // 3. Hash the password
-        // We 'await' the salt and the hash so the code doesn't move on 
-        // until the password is fully encrypted.
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -26,12 +24,12 @@ router.post("/signin", async (req, res) => {
         const newUser = new User({
             username,
             email,
-            password: hashedPassword // Save the hashed version, never the plain text!
+            password: hashedPassword 
         });
 
         const savedUser = await newUser.save();
 
-        const token = jwt.sign({email}, "parthkhandelwal");
+        const token = jwt.sign({email}, process.env.SECRET_KEY);
 
         res.status(201).json({ message: "User saved!", user: savedUser, token: token});
 
@@ -59,7 +57,7 @@ router.post("/login", async (req, res) => {
             return res.status(400).json("Invalid email or password");
         }
 
-        const token = jwt.sign({email}, "parthkhandelwal");
+        const token = jwt.sign({email}, process.env.SECRET_KEY);
         res.status(200).json({
             message: "Login successful",
             token: token
@@ -75,7 +73,7 @@ router.get("/user", async(req, res) => {
     const authHeader = req.headers.authorization;
     try {
         const token = authHeader.split(' ')[1];
-        const decoded = jwt.verify(token, "parthkhandelwal");
+        const decoded = jwt.verify(token, process.env.SECRET_KEY);
 
         const user = await User.findOne({email: decoded.email});
 

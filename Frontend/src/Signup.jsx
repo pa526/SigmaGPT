@@ -25,7 +25,7 @@ const Signup = () => {
             body: JSON.stringify(formData),
         };
         try {
-            const response = await fetch("http://localhost:8080/signin", options);
+            const response = await fetch("https://sigmagpt-cw84.onrender.com/signin", options);
             const data = await response.json();
           
             if(data.token) {
