@@ -9,7 +9,7 @@ import { MyContext } from "./MyContext";
 import { useState } from "react";
 import { v1 as uuidv1 } from "uuid";
 
-//Components
+// Components
 import ChatWindow from "./ChatWindow";
 import Sidebar from "./Sidebar";
 import Login from "./Login";
@@ -19,7 +19,7 @@ function App() {
   const [prompt, setPrompt] = useState("");
   const [reply, setReply] = useState(null);
   const [currThreadId, setCurrThreadId] = useState(uuidv1());
-  const [prevChats, setPrevChats] = useState([]); //stores all chats of our curr threads
+  const [prevChats, setPrevChats] = useState([]); 
   const [newChat, setNewChat] = useState(true);
   const [allThreads, setAllThreads] = useState([]);
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
@@ -46,38 +46,52 @@ function App() {
   return (
     <Router>
       <Routes>
+        {/* Login Route */}
         <Route
           path="/login"
           element={
             !isAuthenticated ? (
               <Login setIsAuthenticated={setIsAuthenticated} />
-            ) : <Navigate to="/chat"/>
-          }
-        />
-        <Route path="/signup" element={
-            !isAuthenticated ? (
-              <Signup />
-            ) : <Navigate to="/chat"/>
-          } />
-
-        <Route
-          path="/chat"
-          element={
-            isAuthenticated ? (
-              <div className="app">
-                <MyContext.Provider value={providerValues}>
-                  <Sidebar />
-                  <ChatWindow />
-                </MyContext.Provider>
-              </div>
             ) : (
-              <Navigate to="/login" />
+              <Navigate to="/chat" replace />
             )
           }
         />
 
-        {/* 3. Redirect: If user hits root "/", send to login or chat */}
-        <Route path="/" element={<Navigate to="/login" />} />
+        {/* Signup Route */}
+        <Route 
+          path="/signup" 
+          element={
+            !isAuthenticated ? (
+              <Signup />
+            ) : (
+              <Navigate to="/chat" replace />
+            )
+          } 
+        />
+
+        {/* Protected Chat Route */}
+        <Route
+          path="/chat"
+          element={
+            isAuthenticated ? (
+              <MyContext.Provider value={providerValues}>
+                <div className="app">
+                  <Sidebar />
+                  <ChatWindow />
+                </div>
+              </MyContext.Provider>
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+
+        {/* Root Redirect */}
+        <Route path="/" element={<Navigate to={isAuthenticated ? "/chat" : "/login"} replace />} />
+        
+        {/* Catch-all for any other broken links */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   );
