@@ -30,6 +30,10 @@ const Login = ({ setIsAuthenticated }) => {
         navigate("/chat");
       } else {
         alert("Email or Password is incorrect");
+        setFormData({
+          email: "",
+          password: "",
+        });
       }
     } catch (err) {
       console.log("Login failure:", err);

@@ -1,7 +1,7 @@
-import React from 'react';
-import './Signup.css';
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React from "react";
+import "./Signup.css";
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -13,7 +13,7 @@ const Signup = () => {
 
   const handleFormData = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,7 +26,10 @@ const Signup = () => {
     };
     try {
       // Note: Kept your /signin endpoint as per original logic
-      const response = await fetch("https://sigmagpt-cw84.onrender.com/signin", options);
+      const response = await fetch(
+        "https://sigmagpt-cw84.onrender.com/signin",
+        options,
+      );
       const data = await response.json();
 
       if (data.token) {
@@ -34,12 +37,17 @@ const Signup = () => {
         navigate("/chat");
       } else {
         alert("Email or Password is incorrect");
+        setFormData({
+          username: "",
+          email: "",
+          password: "",
+        });
       }
     } catch (err) {
       console.error("Signup error:", err);
       alert("Email or Password is incorrect");
     }
-  }
+  };
 
   return (
     <div className="auth-container">
