@@ -3,7 +3,7 @@ import "./Signup.css";
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
-const Signup = () => {
+const Signin = ({setIsAuthenticated}) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
@@ -34,6 +34,7 @@ const Signup = () => {
 
       if (data.token) {
         localStorage.setItem("token", data.token);
+        setIsAuthenticated(true);
         navigate("/chat");
       } 
     } catch (err) {
@@ -106,4 +107,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default Signin;

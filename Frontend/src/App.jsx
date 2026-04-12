@@ -13,7 +13,7 @@ import { v1 as uuidv1 } from "uuid";
 import ChatWindow from "./ChatWindow";
 import Sidebar from "./Sidebar";
 import Login from "./Login";
-import Signup from "./Signup";
+import Signin from "./Signin";
 import Chat from "./Chat";
 
 function App() {
@@ -60,9 +60,9 @@ function App() {
 
         {/* Signup Route */}
         <Route 
-          path="/signup" 
+          path="/signin" 
           element={!isAuthenticated ? 
-              <Signup /> : <Navigate to={"/chat"}/>
+              <Signin setIsAuthenticated={setIsAuthenticated}/> : <Navigate to={"/chat"}/>
           } 
         />
 
