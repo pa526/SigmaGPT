@@ -28,6 +28,8 @@ const Login = ({ setIsAuthenticated }) => {
         localStorage.setItem("token", data.token);
         setIsAuthenticated(true);
         navigate("/chat");
+      } else {
+        alert("Email or Password is incorrect");
       }
     } catch (err) {
       console.log("Login failure:", err);

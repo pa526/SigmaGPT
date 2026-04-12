@@ -32,6 +32,8 @@ const Signup = () => {
       if (data.token) {
         localStorage.setItem("token", data.token);
         navigate("/chat");
+      } else {
+        alert("Email or Password is incorrect");
       }
     } catch (err) {
       console.error("Signup error:", err);
