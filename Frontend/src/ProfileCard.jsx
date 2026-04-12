@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { IoPersonCircleSharp } from "react-icons/io5";
 import './ProfileCard.css';
 
-const ProfileCard = () => {
+const ProfileCard = ({ onClose }) => {
   const [user, setUser] = useState({
     username: "",
     email: "",
@@ -40,8 +40,15 @@ const ProfileCard = () => {
   const username = user.username || "Guest User";
   const email = user.email || "user@sigmagpt.com";
 
+  const handleBackdropClick = (e) => {
+    // Only close if clicking on the backdrop (not on the card content)
+    if (e.target === e.currentTarget && onClose) {
+      onClose();
+    }
+  };
+
   return (
-    <div className="sigma-profile-card">
+    <div className="sigma-profile-card" onClick={handleBackdropClick}>
       <div className="card-body">
         <div className="user-section">
           <div className="avatar-box">

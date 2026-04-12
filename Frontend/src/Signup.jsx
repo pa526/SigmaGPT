@@ -35,6 +35,7 @@ const Signup = () => {
       }
     } catch (err) {
       console.error("Signup error:", err);
+      alert("Email or Password is incorrect");
     }
   }
 

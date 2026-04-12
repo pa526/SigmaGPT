@@ -185,3 +185,7 @@
         font-size: 10px;
     }
 }
+
+.fa-trash:hover {
+    color: #f87171;
+}

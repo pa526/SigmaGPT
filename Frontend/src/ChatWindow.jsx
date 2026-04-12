@@ -23,10 +23,21 @@ export default function ChatWindow() {
   const [isOpen, setIsOpen] = useState(false);
   const [showCard, setShowCard] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const navigate = useNavigate();
+
+  // Handle responsive behavior
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const BACKEND_URL = "https://sigmagpt-cw84.onrender.com";
 
@@ -147,7 +158,7 @@ export default function ChatWindow() {
 
           {isOpen && (
             <div className="dropDown">
-              {showCard && <ProfileCard />}
+              {!isMobile && showCard && <ProfileCard />}
               <div className="dropDownItem" onClick={() => setShowCard(!showCard)}>
                 <i className="fa-solid fa-circle-user"></i> Profile
               </div>
@@ -161,6 +172,9 @@ export default function ChatWindow() {
           )}
         </div>
       </nav>
+
+      {/* Mobile ProfileCard - Rendered outside dropdown for centering */}
+      {showCard && isMobile && <ProfileCard onClose={() => setShowCard(false)} />}
 
       <main className="chatArea">
         <Chat />

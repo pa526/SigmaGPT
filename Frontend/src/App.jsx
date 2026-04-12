@@ -28,34 +28,6 @@ function App() {
   });
   const [isCollapsed, setIsCollapsed] = useState(false);
 
-  const refreshThreads = async () => {
-    const token = localStorage.getItem('token');
-    if (!token) return;
-
-    try {
-      const response = await fetch("http://localhost:8080/api/thread", {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        const res = await response.json();
-        if(Array.isArray(res)) {
-          const filteredData = res.map((thread) => ({
-            threadId: thread.threadId,
-            title: thread.title,
-          }));
-          setAllThreads(filteredData);
-        }
-      }
-    } catch (err) {
-      console.error('Error refreshing threads:', err);
-    }
-  };
-
   const providerValues = {
     prompt,
     setPrompt,
@@ -73,7 +45,6 @@ function App() {
     setIsAuthenticated,
     isCollapsed,
     setIsCollapsed,
-    refreshThreads,
   };
 
   return (

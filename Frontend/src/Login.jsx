@@ -31,6 +31,7 @@ const Login = ({ setIsAuthenticated }) => {
       }
     } catch (err) {
       console.log("Login failure:", err);
+      alert("Email or Password is incorrect");
     }
   }
 
