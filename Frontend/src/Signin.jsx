@@ -36,10 +36,17 @@ const Signin = ({setIsAuthenticated}) => {
         localStorage.setItem("token", data.token);
         setIsAuthenticated(true);
         navigate("/chat");
-      } 
+      } else {
+        alert("Email or Password already exists");
+        setFormData({
+          username: "",
+          email: "",
+          password: "",
+        });
+      }
     } catch (err) {
-      console.error("Signup error:", err);
-      alert("Email or Password is incorrect");
+      alert("Email or Password already exists");
+      console.log(err);
     }
   };
 
