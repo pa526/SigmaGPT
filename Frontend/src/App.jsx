@@ -14,6 +14,7 @@ import ChatWindow from "./ChatWindow";
 import Sidebar from "./Sidebar";
 import Login from "./Login";
 import Signup from "./Signup";
+import Chat from "./Chat";
 
 function App() {
   const [prompt, setPrompt] = useState("");
@@ -25,6 +26,35 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     return localStorage.getItem("token") !== null;
   });
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const refreshThreads = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    try {
+      const response = await fetch("http://localhost:8080/api/thread", {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const res = await response.json();
+        if(Array.isArray(res)) {
+          const filteredData = res.map((thread) => ({
+            threadId: thread.threadId,
+            title: thread.title,
+          }));
+          setAllThreads(filteredData);
+        }
+      }
+    } catch (err) {
+      console.error('Error refreshing threads:', err);
+    }
+  };
 
   const providerValues = {
     prompt,
@@ -41,6 +71,9 @@ function App() {
     setAllThreads,
     isAuthenticated,
     setIsAuthenticated,
+    isCollapsed,
+    setIsCollapsed,
+    refreshThreads,
   };
 
   return (
@@ -49,16 +82,16 @@ function App() {
         {/* Login Route */}
         <Route
           path="/login"
-          element={
-              <Login setIsAuthenticated={setIsAuthenticated} />
+          element={!isAuthenticated ?
+              <Login setIsAuthenticated={setIsAuthenticated} />: <Navigate to={"/chat"}/>
           }
         />
 
         {/* Signup Route */}
         <Route 
           path="/signup" 
-          element={
-              <Signup />
+          element={!isAuthenticated ? 
+              <Signup /> : <Navigate to={"/chat"}/>
           } 
         />
 
@@ -69,6 +102,21 @@ function App() {
             isAuthenticated ? (
               <MyContext.Provider value={providerValues}>
                 <div className="app">
+                  {/* Mobile Backdrop Overlay */}
+                  {!isCollapsed && (
+                    <div 
+                      className="sidebar-backdrop" 
+                      onClick={() => setIsCollapsed(true)}
+                    ></div>
+                  )}
+
+                  <button 
+                    className="sidebar-toggle-btn" 
+                    onClick={() => setIsCollapsed(!isCollapsed)}
+                    title={isCollapsed ? "Open sidebar" : "Close sidebar"}
+                  >
+                    <i className={`fa-solid ${isCollapsed ? "fa-bars" : "fa-chevron-left"}`}></i>
+                  </button>
                   <Sidebar />
                   <ChatWindow />
                 </div>

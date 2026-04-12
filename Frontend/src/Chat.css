@@ -66,3 +66,90 @@ pre {
 ::-webkit-scrollbar-thumb:hover {
   background: #666;
 }
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+@media (max-width: 900px) {
+    .chats {
+        max-width: 100%;
+        padding: 1.5rem 1rem;
+    }
+
+    .userMessage {
+        max-width: 85%;
+    }
+}
+
+@media (max-width: 768px) {
+    .chats {
+        max-width: 100%;
+        padding: 1.5rem 0.75rem;
+    }
+
+    .userDiv {
+        font-size: 0.85rem;
+    }
+
+    .gptDiv {
+        font-size: 1rem;
+    }
+
+    .userMessage {
+        max-width: 85%;
+        font-size: 0.95rem;
+        padding: 10px 14px;
+        border-radius: 16px;
+    }
+}
+
+@media (max-width: 600px) {
+    .chats {
+        max-width: 100%;
+        padding: 1rem 0.5rem;
+    }
+
+    .userDiv {
+        font-size: 0.8rem;
+    }
+
+    .gptDiv {
+        font-size: 0.95rem;
+        line-height: 1.2;
+    }
+
+    .userMessage {
+        max-width: 90%;
+        font-size: 0.9rem;
+        padding: 8px 12px;
+        border-radius: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .chats {
+        max-width: 100%;
+        padding: 0.75rem 0.5rem;
+    }
+
+    .userMessage {
+        max-width: 95%;
+        font-size: 0.85rem;
+        padding: 8px 10px;
+        border-radius: 12px;
+    }
+
+    .gptDiv {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .chats {
+        padding: 0.5rem 0.3rem;
+    }
+
+    .userMessage {
+        max-width: 95%;
+        font-size: 0.8rem;
+        padding: 6px 10px;
+    }
+}

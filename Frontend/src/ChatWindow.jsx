@@ -28,7 +28,6 @@ export default function ChatWindow() {
   const audioChunksRef = useRef([]);
   const navigate = useNavigate();
 
-  // Define the base backend URL here for easy updates
   const BACKEND_URL = "https://sigmagpt-cw84.onrender.com";
 
   const fetchAIReply = async (messageText) => {
@@ -135,28 +134,33 @@ export default function ChatWindow() {
   return (
     <div className="chatWindow">
       <nav className="navbar">
-        <div className="logo-group">
-          <span className="logo" onClick={() => navigate("/")} style={{cursor: 'pointer'}}>
-            SigmaGPT
-          </span>
-        </div>
-        <div className="userIconDiv" onClick={() => setIsOpen(!isOpen)}>
-          <span className="userIcon"><i className="fa-solid fa-user"></i></span>
+        {/* Placeholder for left-side brand/title if needed, 
+            keeping it empty ensures the next div goes to the right */}
+        <div className="nav-left"></div>
+
+        <div className="nav-right">
+          <div className="userIconDiv" onClick={() => setIsOpen(!isOpen)}>
+            <span className="userIcon">
+              <i className="fa-solid fa-user"></i>
+            </span>
+          </div>
+
+          {isOpen && (
+            <div className="dropDown">
+              {showCard && <ProfileCard />}
+              <div className="dropDownItem" onClick={() => setShowCard(!showCard)}>
+                <i className="fa-solid fa-circle-user"></i> Profile
+              </div>
+              <div className="dropDownItem">
+                <i className="fa-solid fa-gear"></i> Settings
+              </div>
+              <div className="dropDownItem logout" onClick={handleLogOut}>
+                <i className="fa-solid fa-arrow-right-from-bracket"></i> Log out
+              </div>
+            </div>
+          )}
         </div>
       </nav>
-
-      {isOpen && (
-        <div className="dropDown">
-          {showCard && <ProfileCard />}
-          <div className="dropDownItem" onClick={() => setShowCard(!showCard)}>
-            <i className="fa-solid fa-circle-user"></i> Profile
-          </div>
-          <div className="dropDownItem"><i className="fa-solid fa-gear"></i> Settings</div>
-          <div className="dropDownItem logout" onClick={handleLogOut}>
-            <i className="fa-solid fa-arrow-right-from-bracket"></i> Log out
-          </div>
-        </div>
-      )}
 
       <main className="chatArea">
         <Chat />
@@ -176,17 +180,17 @@ export default function ChatWindow() {
               onChange={(e) => setPrompt(e.target.value)}
               onKeyDown={(e) => (e.key === "Enter" ? getReply() : "")}
             />
-            
+
             <div className="action-icons">
-              <button 
+              <button
                 className={`icon-btn mic-btn ${isRecording ? "active" : ""}`}
                 onClick={isRecording ? stopRecording : startRecording}
                 title="Use microphone"
               >
                 <i className={`fa-solid ${isRecording ? "fa-stop" : "fa-microphone"}`}></i>
               </button>
-              
-              <button 
+
+              <button
                 className={`icon-btn send-btn ${prompt.trim() ? "visible" : ""}`}
                 onClick={getReply}
                 disabled={!prompt.trim() || loading}

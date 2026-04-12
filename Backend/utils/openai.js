@@ -8,7 +8,7 @@ const getOpenAPIResponse = async(message) => {
             "Authorization" : `Bearer ${process.env.OPENAI_API_KEY}`,
         },
         body: JSON.stringify({
-            model: "gpt-5-mini",
+            model: "gpt-3.5-turbo",
             messages: [{
                 role: "user",
                 content: message,
@@ -20,7 +20,7 @@ const getOpenAPIResponse = async(message) => {
         const response = await fetch("https://api.chatanywhere.tech/v1/chat/completions", options);
         const data = await response.json();
         console.log(data);
-        return data.choices[0].delta.content;
+        return data.choices[0].message.content;
     } catch(err) {
         console.log(err);
     }

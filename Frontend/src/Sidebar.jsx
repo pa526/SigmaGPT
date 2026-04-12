@@ -1,10 +1,9 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import "./Sidebar.css";
 import { MyContext } from "./MyContext.jsx";
 import { v1 as uuidv1 } from "uuid";
 
 export default function Sidebar() {
-  const [isCollapsed, setIsCollapsed] = useState(false); // State for toggle
   const {
     allThreads,
     setAllThreads,
@@ -14,6 +13,7 @@ export default function Sidebar() {
     setReply,
     setCurrThreadId,
     setPrevChats,
+    isCollapsed,
   } = useContext(MyContext);
 
   const getAllThreads = async () => {
@@ -27,11 +27,13 @@ export default function Sidebar() {
     try {
       const response = await fetch("https://sigmagpt-cw84.onrender.com/api/thread", options);
       const res = await response.json();
-      const filteredData = res.map((thread) => ({
-        threadId: thread.threadId,
-        title: thread.title,
-      }));
-      setAllThreads(filteredData);
+      if(Array.isArray(res)) {
+        const filteredData = res.map((thread) => ({
+          threadId: thread.threadId,
+          title: thread.title,
+        }));
+        setAllThreads(filteredData);
+      }
     } catch (err) {
       console.error(err);
     }
@@ -78,55 +80,60 @@ export default function Sidebar() {
       },
     };
     try {
-      await fetch(`https://sigmagpt-cw84.onrender.com/api/thread/${threadId}`, options);
+      const response = await fetch(`https://sigmagpt-cw84.onrender.com/api/thread/${threadId}`, options);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log('Thread deleted successfully:', result);
+
+      // Update UI only after successful deletion
       setAllThreads(prev => prev.filter(thread => thread.threadId !== threadId));
-      if (threadId === currThreadId) createNewChat();
+
+      if (threadId === currThreadId) {
+        createNewChat();
+      }
     } catch (err) {
-      console.error(err);
+      console.error('Failed to delete thread:', err);
+      alert('Failed to delete thread. Please try again.');
     }
   };
 
   return (
     <section className={`sidebar ${isCollapsed ? "collapsed" : ""}`}>
-      {/* Toggle Button */}
-      <div className="toggle-container">
-        <button className="toggle-btn" onClick={() => setIsCollapsed(!isCollapsed)}>
-          <i className={`fa-solid ${isCollapsed ? "fa-bars" : "fa-chevron-left"}`}></i>
-        </button>
-      </div>
+      {!isCollapsed && (
+        <div className="sidebar-content">
+          <button className="new-chat-btn" onClick={createNewChat}>
+            <div className="btn-left">
+              <span className="btn-text">New Chat</span>
+            </div>
+            <i className="fa-solid fa-pen-to-square"></i>
+          </button>
 
-      <div className="sidebar-content">
-        <button className="new-chat-btn" onClick={createNewChat}>
-          <img src="src/assets/blacklogo.png" alt="logo" className="logo" />
-          {!isCollapsed && <span className="btn-text">New Chat</span>}
-          <span><i className="fa-solid fa-pen-to-square"></i></span>
-        </button>
-
-        <ul className="history">
-          {allThreads?.map((thread, idx) => (
-            <li 
-              key={idx} 
-              onClick={() => changeThread(thread.threadId)} 
-              className={thread.threadId === currThreadId ? "highlighted" : ""}
-            >
-              <i className="fa-regular fa-message"></i>
-              {!isCollapsed && <span className="thread-title">{thread.title}</span>}
-              {!isCollapsed && (
+          <ul className="history">
+            {allThreads?.map((thread, idx) => (
+              <li 
+                key={idx} 
+                onClick={() => changeThread(thread.threadId)} 
+                className={thread.threadId === currThreadId ? "highlighted" : ""}
+              >
+                <i className="fa-regular fa-message"></i>
+                <span className="thread-title">{thread.title}</span>
                 <i 
                   onClick={(e) => { e.stopPropagation(); deleteThread(thread.threadId); }} 
                   className="fa-solid fa-trash"
                 ></i>
-              )}
-            </li>
-          ))}
-        </ul>
+              </li>
+            ))}
+          </ul>
 
-        {!isCollapsed && (
           <div className="sign">
             <p>By Parth Khandelwal &hearts;</p>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </section>
   );
 }
