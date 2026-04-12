@@ -82,7 +82,7 @@ const Login = ({ setIsAuthenticated }) => {
         </form>
 
         <footer className="auth-footer">
-          Don't have an account? <Link to="/signup">Sign up</Link>
+          Don't have an account? <Link to="/signin">Sign up</Link>
         </footer>
       </div>
     </div>

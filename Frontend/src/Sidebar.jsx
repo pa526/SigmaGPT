@@ -86,8 +86,9 @@ export default function Sidebar() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const result = await response.json();
-      console.log('Thread deleted successfully:', result);
+      await response.json();
+
+      
 
       // Update UI only after successful deletion
       setAllThreads(prev => prev.filter(thread => thread.threadId !== threadId));
